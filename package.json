@@ -1,0 +1,29 @@
+{
+  "name": "craftsmannode",
+  "version": "1.0.0",
+  "description": "training app",
+  "main": "src/backend/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://vyotiainen@bitbucket.org/vyotiainen/craftsmannode.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/vyotiainen/craftsmannode#readme",
+  "dependencies": {
+    "async": "^1.5.2",
+    "bower": "^1.7.9",
+    "db-migrate": "^0.9.23",
+    "mysql": "^2.10.2",
+    "node-dbi": "^0.7.1",
+    "percolator": "^1.5.0"
+  },
+  "devDependencies": {
+    "jasmine-node": "^1.14.5",
+    "request": "^2.72.0",
+    "sqlite3": "^3.1.4"
+  }
+}
