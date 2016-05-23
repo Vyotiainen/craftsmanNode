@@ -54,7 +54,7 @@
                     field:'keywordCategoryID',
                     displayName:'Category',
                     cellTemplate: 'app/keywords/partials/keywordCategoryGridCell.html',
-                    editableCellTemplate:'app/keywords/partials/keywordCateggoryGridCellEditor.html'
+                    editableCellTemplate:'app/keywords/partials/keywordCategoryGridCellEditor.html'
                 },
                 {
                     field:'',
@@ -68,7 +68,7 @@
         
         $scope.createKeyword = function(newKeyword) {
             $scope.$broadcast('ngGridEventEndCellEdit');
-            if(neKeyword.value.length > 0) {
+            if(newKeyword.value.length > 0) {
                 KeywordsRepository.createOne(newKeyword).then(function() {
                     KeywordsRepository.readAll().then(function(keywords) {
                         $scope.keywords = keywords;

@@ -18,9 +18,27 @@ var Server = function(port) {
                         res.collection(rows).send();
                     }
                 });
+            },
+            
+            POST: function(req, res) {
+                req.onJson(function(err, newKeyword) {
+                    if(err) {
+                        console.log(err + " row 26");
+                        res.status.internalServerError(err);
+                    } else {
+                        dbSession.query('insert into keyword (value, categoryID) values (?,?);', [newKeyword.value, newKeyword.categoryID], function(err) {
+                            if(err) {
+                                console.log(err + " row 31");
+                                res.status.internalServerError(err);
+                            } else {
+                                res.object({'status':'ok'}).send();
+                            }
+                        });
+                    }
+                });
             }
         }
-    );
+    ); 
     
     server.route('/api/keywords/categories',
         {
@@ -31,6 +49,41 @@ var Server = function(port) {
                         res.status.internalServerError(err);
                     } else {
                         res.collection(rows).send();
+                    }
+                });
+            }
+        }
+    );
+    
+    server.route('/api/keywords/:id', 
+        {
+            POST: function(req, res) {
+                var keywordId = req.uri.child();
+                req.onJson(function(err, keyword) {
+                    if(err) {
+                        console.log(err);
+                        res.status.internalServerError(err);
+                    } else {
+                        dbSession.query('update keyword set value = ?, categoryID = ? where keyword.id = ?;', [keyword.value, keyword.categoryID, keywordId], function(err) {
+                            if(err) {
+                                console.log(err);
+                                res.status.internalServerError(err);
+                            } else {
+                                res.object({'status':'ok'}).send();
+                            }
+                        });
+                    }
+                });
+            },
+            
+            DELETE: function(req, res) {
+                var keywordId = req.uri.child();
+                dbSession.query('delete from keyword where keyword.id = ?', [keywordId], function(err, result) {
+                    if(err) {
+                        console.log(err);
+                        res.status.internalServerError(err);
+                    } else {
+                        res.object({'status':'ok'}).send();
                     }
                 });
             }

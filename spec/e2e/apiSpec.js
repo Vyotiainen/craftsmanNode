@@ -138,4 +138,157 @@ describe('The API', function() {
             }
         );
     });
+    
+    it('should create a new keyword when receiving a post request at /api/keywords/', function(done) {
+        var expected = {
+            "_items": [
+                {'id':1, 'value':'Aubergine', 'categoryID':1},
+                {'id':2, 'value':'Onion', 'categoryID':1}
+            ]
+        };
+        
+        var body = {
+            'value':'Onion',
+            'categoryID':1
+        }
+        
+        async.series(
+            [
+                function(callback) {
+                    dbSession.insert('category', {'name':'Vegetable'}, function(err) {
+                        callback(err);
+                    })
+                },
+                function(callback) {
+                    dbSession.insert('keyword', {'value':'Aubergine', 'categoryID':1}, function(err){
+                        callback(err);
+                    })
+                }
+            ],
+            function(err, results) {
+                if(err) throw(err);
+                request.post(
+                    {
+                        'url':'http://localhost:8081/api/keywords/',
+                        'body': body,
+                        'json':true
+                    },
+                    function(err, res, body){
+                        if(err) throw(err);
+                        expect(res.statusCode).toBe(200);
+                        request.get(
+                            {
+                                'url':'http://localhost:8081/api/keywords/',
+                                'json':true
+                            },
+                            function(err, res, body) {
+                                expect(res.statusCode).toBe(200);
+                                expect(body).toEqual(expected);
+                                done();
+                            }
+                        );
+                    }
+                );
+            }
+        )
+    });
+    
+    it('should update a keyword when receiving a post request at /api/keywords/:id/', function(done) {
+        var expected = {
+            "_items": [
+                {'id':1, 'value':'Onion', 'categoryID': 2}
+            ]
+        };
+        
+        var body = {
+            'id':1,
+            'value':'Onion',
+            'categoryID':2
+        };
+        
+        async.series(
+            [
+                function(callback) {
+                    dbSession.insert('category', {'name':'Vegetable'}, function(err) {
+                        callback(err);
+                    });
+                },
+                function(callback) {
+                    dbSession.insert('category', {'name':'Utility'}, function(err) {
+                        callback(err);
+                    })
+                },
+                function(callback) {
+                    dbSession.insert('keyword', {'value':'Aubergine', 'categoryID':1}, function(err) {
+                        callback(err);
+                    })
+                }
+            ],
+            function(err, results) {
+                if(err) throw(err);
+                
+                request.post(
+                    {
+                        'url':'http://localhost:8081/api/keywords/1',
+                        'body':body,
+                        'json':true
+                    },
+                    function(err,res,body) {
+                        if(err) throw(err);
+                        expect(res.statusCode).toBe(200);
+                        request.get(
+                            {
+                                'url':'http://localhost:8081/api/keywords/',
+                                'json':true
+                            },
+                            function(err, res, body) {
+                                expect(res.statusCode).toBe(200);
+                                expect(body).toEqual(expected);
+                                done();
+                            }
+                        );
+                    }
+                );
+            }
+        );
+    });
+    
+    it('should remove a keyword when receiving a delete request at /api/keywords/:id', function(done) {
+        var expected = {
+            "_items": [
+                {'id':1, 'value':'Aubergine', 'categoryID':1}
+            ]
+        };
+        
+        async.series(
+            [
+                function(callback) {
+                    dbSession.insert('category', {'name':'Vegetable'}, function(err) {
+                        callback(err);
+                    });
+                },
+                function(callback) {
+                    dbSession.insert('keyword', {'value':'Aubergine', 'categoryID': 1}, function(err) {
+                        callback(err);
+                    });
+                },
+                function(callback) {
+                    dbSession.insert('keyword', {'value':'Onion', 'categoryID': 1}, function(err) {
+                        callback(err);
+                    });
+                }
+            ],
+            function(err, results) {
+                if(err) throw(err);
+                request.del({'url':'http://localhost:8081/api/keywords/2/', 'json':true}, function(err, res, body) {
+                    if(err) throw (err);
+                    request.get({'url':'http://localhost:8081/api/keywords/', 'json':true}, function(err, res, body) {
+                        expect(res.statusCode).toBe(200);
+                        expect(body).toEqual(expected);
+                        done();
+                    });
+                });
+            }
+        );
+    });
 });
